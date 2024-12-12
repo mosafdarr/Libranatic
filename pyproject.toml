@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "integration-repo"
+version = "0.1.0"
+description = "A FastAPI project with core dependencies."
+authors = ["Muhammad Safdar <mosafdaralii@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+# FastAPI and Core Dependencies
+fastapi = "0.109.0"
+uvicorn = "0.24.0"
+pydantic = "2.6.0"
+pydantic-settings = "2.1.0"
+
+# Database
+sqlalchemy = "2.0.25"
+alembic = "1.13.1"
+asyncpg = "0.29.0"
+psycopg2-binary = "2.9.9"
+
+# Authentication and Authorization
+python-jose = { version = "3.3.0", extras = ["cryptography"] }
+passlib = { version = "1.7.4", extras = ["bcrypt"] }
+python-multipart = "0.0.9"
+
+# Environment and Configuration
+python-dotenv = "1.0.0"
+
+# Validation
+email-validator = "2.1.0"
+
+# Security
+httpx = "0.26.0"
+
+# Optional but Recommended
+sqlalchemy-utils = "0.41.1"
+
+# Testing
+pytest = "7.4.4"
+asynctest = "0.13.0"
+
+# Logging
+loguru = "0.7.2"
+
+[build-system]
+requires = ["poetry-core>=1.5.0"]
+build-backend = "poetry.core.masonry.api"
