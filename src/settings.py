@@ -3,7 +3,7 @@ from pydantic import Field
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = Field(env="PROJECT_NAME", default="Integration Repo")
-    DATABASE_URL: str = Field(env="DATABASE_URL", default="postgresql+psycopg2://postgres:mosafdar%40123@localhost:5432/practice")
+    DATABASE_URL: str = Field(env="DATABASE_URL", default="postgresql://postgres:mosafdar%%40123@localhost:5432/integrationdb")
     DATABASE_ENGINE_ECHO: bool = Field(env="DATABASE_ENGINE_ECHO", default=True) # set to false in production
     
     # JWT Configuration
