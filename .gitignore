@@ -25,3 +25,5 @@ Thumbs.db
 #virtual environments
 .venv/
 venv/
+
+.cspell/

@@ -1,19 +1,21 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic import Field
 
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "Integration Repo"
-    DATABASE_URL: str = "postgresql+asyncpg://user:password@localhost/dbname"
+    PROJECT_NAME: str = Field(env="PROJECT_NAME", default="Integration Repo")
+    DATABASE_URL: str = Field(env="DATABASE_URL", default="postgresql+psycopg2://postgres:mosafdar%40123@localhost:5432/practice")
+    DATABASE_ENGINE_ECHO: bool = Field(env="DATABASE_ENGINE_ECHO", default=True) # set to false in production
     
     # JWT Configuration
-    SECRET_KEY: str = "your-secret-key"
-    ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    SECRET_KEY: str = Field(env="SECRET_KEY", default="your-secret-key")
+    ALGORITHM: str = Field(env="ALGORITHM", default="HS256")
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(env="ACCESS_TOKEN_EXPIRE_MINUTES", default=30)
     
     # Logging
-    LOG_LEVEL: str = "INFO"
+    LOG_LEVEL: str = Field(env="LOG_LEVEL", default="INFO")
     
     # Security
-    CORS_ORIGINS: list[str] = ["*"]
+    CORS_ORIGINS: list[str] = Field(env="CORS_ORIGINS", default=["*"])
     
     # Additional Environment-specific settings
     model_config = SettingsConfigDict(
