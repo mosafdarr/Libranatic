@@ -3,8 +3,9 @@ from pydantic import Field
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = Field(env="PROJECT_NAME", default="Integration Repo")
-    DATABASE_URL: str = Field(env="DATABASE_URL", default="postgresql://postgres:mosafdar%%40123@localhost:5432/integrationdb")
+    DATABASE_URL: str = Field(env="DATABASE_URL", default="postgresql://postgres:mosafdar%40123@localhost:5432/integrationdb")
     DATABASE_ENGINE_ECHO: bool = Field(env="DATABASE_ENGINE_ECHO", default=True) # set to false in production
+    TIMEOUT: int = Field(env="TIMEOUT", default=30)
     
     # JWT Configuration
     SECRET_KEY: str = Field(env="SECRET_KEY", default="your-secret-key")
@@ -24,4 +25,12 @@ class Settings(BaseSettings):
         extra='ignore'
     )
 
+class DatabaseConfig(BaseSettings):
+    @classmethod
+    def get_session(cls):
+        from schema.database import get_session
+        with get_session() as session:
+            yield session
+
 settings = Settings()
+db_config = DatabaseConfig()

@@ -44,6 +44,8 @@ asynctest = "0.13.0"
 
 # Logging
 loguru = "0.7.2"
+requests = "^2.32.3"
+aiohttp = "^3.11.11"
 
 [build-system]
 requires = ["poetry-core>=1.5.0"]
