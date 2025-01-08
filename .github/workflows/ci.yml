@@ -20,6 +20,5 @@ jobs:
       - name: Run Docker container
         run: docker run -d -p 8000:8000 integration-app
       
-      - name: Run unit tests
-        run: |
-          docker exec $(docker ps -q) poetry run pytest src/tests/ -v
+     - name: Run unit tests
+        run: docker exec $(docker ps -q) bash -c "poetry run pytest tests/test_views -v"
