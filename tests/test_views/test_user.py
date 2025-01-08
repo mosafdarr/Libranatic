@@ -1,4 +1,4 @@
-from tests.config import client
+from config import client
 
 def test_users_endpoint_get():
     response = client.get("/users/")
