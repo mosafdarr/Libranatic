@@ -18,7 +18,7 @@ jobs:
         run: docker build -t integration-app .
 
       - name: Run Docker container
-        run: docker run -d -p 8000:8000 my-app
+        run: docker run -d -p 8000:8000 integration-app
       
       - name: Run unit tests
         run: |
