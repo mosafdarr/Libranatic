@@ -1,4 +1,4 @@
-name: CI Pipeline
+name: CI/CD Pipeline
 
 on:
   push:
@@ -6,20 +6,25 @@ on:
       - master
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
 
-      - name: Build Docker image
-        run: docker build -t integration-app .
+    - name: Login to AWS ECR
+      run: |
+        aws ecr get-login-password --region YOUR_REGION | docker login --username AWS --password-stdin YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com
 
-      - name: Run Docker container
-        run: docker run -d -p 8000:8000 --name integration-app-container integration-app
+    - name: Build, tag, and push the image to ECR
+      run: |
+        docker build -t fastapi-lambda-app .
+        docker tag fastapi-lambda-app:latest YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/fastapi-lambda-app:latest
+        docker push YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/fastapi-lambda-app:latest
 
-      - name: Run unit tests
-        run: |
-          docker exec integration-app-container bash -c "PYTHONPATH=/app poetry run pytest tests/test_views -v"
+    - name: Update Lambda Function
+      run: |
+        aws lambda update-function-code --function-name YOUR_LAMBDA_FUNCTION_NAME --image-uri YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/fastapi-lambda-app:latest
