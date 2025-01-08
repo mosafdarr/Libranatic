@@ -1,28 +1,30 @@
-# Use official Python runtime as a parent image
-FROM public.ecr.aws/lambda/python:3.12
+name: CI/CD Pipeline
 
-# Set working directory in the container
-WORKDIR /app
+on:
+  push:
+    branches:
+      - master
 
-# Install poetry
-RUN pip install poetry
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
 
-# Copy project files first
-COPY pyproject.toml poetry.lock README.md ./
+    steps:
+    - uses: actions/checkout@v2
 
-# Install dependencies
-RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-ansi --no-root
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
 
-# Copy the current directory contents into the container
-COPY . .
+    - name: Login to AWS ECR
+      run: |
+        aws ecr get-login-password --region YOUR_REGION | docker login --username AWS --password-stdin YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com
 
-# Make port 8000 available to the world outside this container
-EXPOSE 8000
+    - name: Build, tag, and push the image to ECR
+      run: |
+        docker build -t fastapi-lambda-app .
+        docker tag fastapi-lambda-app:latest YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/fastapi-lambda-app:latest
+        docker push YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/fastapi-lambda-app:latest
 
-# Set environment variables
-ENV PYTHONPATH=/app/src
-ENV PYTHONUNBUFFERED=1
-
-# Command to run the application
-CMD ["index.handler"]
+    - name: Update Lambda Function
+      run: |
+        aws lambda update-function-code --function-name YOUR_LAMBDA_FUNCTION_NAME --image-uri YOUR_AWS_ACCOUNT_ID.dkr.ecr.YOUR_REGION.amazonaws.com/fastapi-lambda-app:latest
