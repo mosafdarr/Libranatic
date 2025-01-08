@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from mangum import Mangum
+
 from libintegration.middlewares.header_middleware import HeaderMiddleware
-from contextlib import asynccontextmanager
+# from contextlib import asynccontextmanager
 
 # from app.database import engine, Base
 from libintegration.domain.routers import user_router
@@ -31,3 +33,5 @@ app.include_router(user_router)
 @app.get("/health")
 async def health():
     return {"message": "Application's health is good."}
+
+handler = Mangum(app, lifespan="off", api_gateway_base_path="/")

@@ -1,5 +1,5 @@
 # Use official Python runtime as a parent image
-FROM python:3.12-slim
+FROM public.ecr.aws/lambda/python:3.12
 
 # Set working directory in the container
 WORKDIR /app
@@ -25,4 +25,4 @@ ENV PYTHONPATH=/app/src
 ENV PYTHONUNBUFFERED=1
 
 # Command to run the application
-CMD ["poetry", "run", "uvicorn", "index:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["index.handler"]
