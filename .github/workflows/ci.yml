@@ -24,14 +24,23 @@ jobs:
 
     - name: Login to AWS ECR
       run: |
-        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 017820660583.dkr.ecr.us-east-1.amazonaws.com
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
 
     - name: Build, tag, and push the image to ECR
+      env:
+        ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+        IMAGE_NAME: ${{ secrets.ECR_REPOSITORY }}
+        IMAGE_TAG: latest
       run: |
-        docker build -t integration-app .
-        docker tag integration-repo:latest 017820660583.dkr.ecr.us-east-1.amazonaws.com/integration-repo:latest
-        docker push 017820660583.dkr.ecr.us-east-1.amazonaws.com/integration-repo:latest
+        docker build -t $IMAGE_NAME .
+        docker tag $IMAGE_NAME:$IMAGE_TAG $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
 
     - name: Update Lambda Function
+      env:
+        FUNCTION_NAME: ${{ secrets.LAMBDA_FUNCTION_NAME }}
+        ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+        IMAGE_NAME: ${{ secrets.ECR_REPOSITORY }}
+        IMAGE_TAG: latest
       run: |
-        aws lambda update-function-code --function-name integration-repo --image-uri 017820660583.dkr.ecr.us-east-1.amazonaws.com/integration-repo:latest
+        aws lambda update-function-code --function-name $FUNCTION_NAME --image-uri $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
