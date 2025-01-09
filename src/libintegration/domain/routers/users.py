@@ -62,3 +62,18 @@ def read_users(
 ):
     logger.info(f"Your User code is {user_code}")
     return users_model.UserResponseModel(message=["user1", "user2"])
+
+@user_router.get(
+        "/test2-lambda",
+        summary="Test Route 1",
+        tags=["Test Route"],
+        description="This route is configure as test to third party integrations.",
+        include_in_schema=True
+)
+def read_users(
+    # db_sesssion=Depends(get_sesssion), - for database sessions
+    # service_provider=Depends(get_service_provider), 
+    user_code=Depends(get_user_code)
+):
+    logger.info(f"Your User code is {user_code}")
+    return users_model.UserResponseModel(message=["user1", "user2"])
