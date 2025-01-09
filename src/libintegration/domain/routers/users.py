@@ -47,3 +47,18 @@ def test_get_third_party_data(
     logger.info(f"Your User code is {user_code}")
     test_data = ThirdPartyIntegrationController()
     return test_data.get_third_party_data(query_param, service_provider, db_session)
+
+@user_router.get(
+        "/test1-lambda",
+        summary="Test Route 1",
+        tags=["Test Route"],
+        description="This route is configure as test to third party integrations.",
+        include_in_schema=True
+)
+def read_users(
+    # db_sesssion=Depends(get_sesssion), - for database sessions
+    # service_provider=Depends(get_service_provider), 
+    user_code=Depends(get_user_code)
+):
+    logger.info(f"Your User code is {user_code}")
+    return users_model.UserResponseModel(message=["user1", "user2"])
