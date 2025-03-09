@@ -1,21 +1,9 @@
 from fastapi import FastAPI
 from mangum import Mangum
-
-from libintegration.middlewares.header_middleware import HeaderMiddleware
-# from contextlib import asynccontextmanager
-
-# from app.database import engine, Base
-from libintegration.domain.routers import user_router
-# from app.auth import routes as auth_routes
 from settings import settings
 
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     # Create database tables on startup
-#     async with engine.begin() as conn:
-#         await conn.run_sync(Base.metadata.create_all)
-#     yield
-#     # Any cleanup code can go here
+from libintegration.middlewares.header_middleware import HeaderMiddleware
+from libintegration.domain.routers import document_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -27,7 +15,7 @@ app = FastAPI(
 HeaderMiddleware().add_middleware(app)
 
 # Include Routers
-app.include_router(user_router)
+app.include_router(document_router)
 
 async def health():
     """

@@ -1,15 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile, File
 
 from logger import logger
 from settings import db_config
 
-from schema.tables import User
-
 from libintegration.domain.controllers.third_party_integration import ThirdPartyIntegrationController
-from libintegration.documentation import users_doc
-from libintegration.domain.models import users_model
+from libintegration.documentation import document_docs
+from libintegration.domain.models import document_model
 
-from .root import get_user_code, get_test_providers, responses
+from .root import responses
 
 document_router = APIRouter(
     prefix="/document",
@@ -17,20 +15,22 @@ document_router = APIRouter(
     responses=responses
 )
 
-@document_router.get(
-        "/",
-        summary=users_doc.summary,
-        tags=["Users"],
-        description=users_doc.descriptions,
-        response_model=users_model.UserResponseModel,
-        include_in_schema=True
+@document_router.post(
+    "/upload",
+    summary=document_docs.summary,
+    tags=["Documents"],
+    description=document_docs.upload_descriptions,
+    response_model=document_model.DocumentModel,
+    include_in_schema=True
 )
-def test_get_third_party_data(
-    query_param: str,
-    user_code=Depends(get_user_code),
-    service_provider=Depends(get_test_providers),
-    db_session=Depends(db_config.get_session)
+def upload_document(
+    db_session = Depends(db_config.get_session),
+    file: UploadFile = File(...)
 ):
-    logger.info(f"Your User code is {user_code}")
-    test_data = ThirdPartyIntegrationController()
-    return test_data.get_third_party_data(query_param, service_provider, db_session)
+    logger.info(f"Upload documents route with filename: {file.filename}")
+    # test_data = ThirdPartyIntegrationController()
+    # # Process the uploaded file here
+    # file_content = await file.read()
+    # You can add logic to handle the file content as needed
+    # return test_data.get_third_party_data(query_param, service_provider, db_session)
+    return True

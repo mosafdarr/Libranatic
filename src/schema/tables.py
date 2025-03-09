@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey
 
 from sqlalchemy.orm import declarative_base, relationship
 from pgvector.sqlalchemy import Vector
