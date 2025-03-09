@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "integration-repo"
+name = "libranatic"
 version = "0.1.0"
-description = "A FastAPI project with core dependencies."
+description = "A FastAPI project that lets chat with your favorite books!"
 authors = ["Muhammad Safdar <mosafdaralii@gmail.com>"]
 license = "MIT"
 readme = "README.md"

@@ -24,13 +24,15 @@ app = FastAPI(
     # lifespan=lifespan
 )
 
-HeaderMiddleware.add_middleware(app)
+HeaderMiddleware().add_middleware(app)
 
 # Include Routers
-# app.include_router(auth_routes.router, prefix="/auth", tags=["Authentication"])
 app.include_router(user_router)
 
-@app.get("/health")
+async def health():
+    """
+    Health check endpoint to verify if the application is running properly.
+    """
 async def health():
     return {"message": "Application's health is good."}
 

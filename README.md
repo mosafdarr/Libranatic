@@ -6,7 +6,7 @@ This is a comprehensive FastAPI project template with robust authentication, dat
 
 ## Features
 
-- Async SQLAlchemy with PostgreSQL
+- SQLAlchemy with PostgreSQL
 - JWT Authentication
 - Dependency Injection
 - Environment Configuration
@@ -17,7 +17,7 @@ This is a comprehensive FastAPI project template with robust authentication, dat
 
 - Python 3.10+
 - PostgreSQL
-- Poetry or pip
+- Poetry
 
 ## Installation
 
@@ -25,7 +25,7 @@ This is a comprehensive FastAPI project template with robust authentication, dat
 
 ```bash
 git clone https://your-repo-url.git
-cd fastapi-project
+cd libranatic
 ```
 
 2. Create Virtual Environment
@@ -38,7 +38,9 @@ source venv/bin/activate  # On Windows use `venv\Scripts\activate`
 3. Install Dependencies
 
 ```bash
-pip install -r requirements.txt
+poetry install
+and
+poetry update
 ```
 
 4. Set up Environment Variables
@@ -49,17 +51,16 @@ pip install -r requirements.txt
 5. Database Setup
 
 ```bash
-# Create database
-createdb fastapi_db
 
 # Run migrations
+alembic init alembic
 alembic upgrade head
 ```
 
 6. Run Application
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn src.index:app --reload
 ```
 
 ## Testing
