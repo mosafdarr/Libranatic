@@ -1,4 +1,8 @@
-from fastapi import APIRouter, Depends, UploadFile, File
+import PyPDF2
+
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from io import BytesIO
+from typing import Optional
 
 from logger import logger
 from settings import db_config
@@ -23,14 +27,27 @@ document_router = APIRouter(
     response_model=document_model.DocumentModel,
     include_in_schema=True
 )
-def upload_document(
-    db_session = Depends(db_config.get_session),
-    file: UploadFile = File(...)
+async def upload_document(
+    file: UploadFile,
+    db_session = Depends(db_config.get_session)
 ):
     logger.info(f"Upload documents route with filename: {file.filename}")
-    # test_data = ThirdPartyIntegrationController()
-    # # Process the uploaded file here
-    # file_content = await file.read()
-    # You can add logic to handle the file content as needed
-    # return test_data.get_third_party_data(query_param, service_provider, db_session)
-    return True
+    
+    try:
+        # Read the PDF file into a BytesIO object
+        pdf_file = await file.read()
+        pdf_reader = PyPDF2.PdfReader(BytesIO(pdf_file))
+        
+        pdf_text = ""
+        # Extract text from each page
+        for page in pdf_reader.pages:
+            pdf_text += page.extract_text() + "\n"
+            
+        return {"status": "success", "text": pdf_text}
+        
+    except Exception as e:
+        logger.error(f"Error processing PDF: {str(e)}")
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid or corrupted PDF file"
+        )
