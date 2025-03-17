@@ -36,5 +36,5 @@ class DocumentInformationChunk(Base):
     id = Column(Integer, primary_key=True, index=True)
     document_id = Column(Integer, ForeignKey('documents.id', ondelete='CASCADE'))
     chunk = Column(String)
-    embedding = Column(Vector(1536))
+    embedding = Column(Vector(1024))
     document = relationship("Document", back_populates="document_information_chunks")

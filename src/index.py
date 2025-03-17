@@ -12,7 +12,7 @@ from libintegration.domain.routers import document_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="Comprehensive FastAPI Project Template",
+    description="Library integration API",
     version="0.1.0",
     # lifespan=lifespan
 )
@@ -26,7 +26,6 @@ async def health():
     """
     Health check endpoint to verify if the application is running properly.
     """
-async def health():
     return {"message": "Application's health is good."}
 
 handler = Mangum(app, lifespan="off", api_gateway_base_path="/")

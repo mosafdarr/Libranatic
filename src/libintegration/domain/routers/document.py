@@ -1,21 +1,24 @@
-import PyPDF2
+"""
+document_router.py
 
-from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
-from io import BytesIO
-from typing import Optional
+This module defines API routes for document-related operations in the FastAPI application.
 
+Routes:
+    - POST /document/upload: Uploads a document for processing.
+"""
+
+from fastapi import APIRouter, Depends, UploadFile
 from logger import logger
 from settings import db_config
-
-from libintegration.domain.controllers.third_party_integration import ThirdPartyIntegrationController
+from libintegration.domain.controllers.document import DocumentController
 from libintegration.documentation import document_docs
 from libintegration.domain.models import document_model
+from .root import responses, get_llm_providers
 
-from .root import responses
+IDEAL_CHUNK_LENGTH = 4000
 
 document_router = APIRouter(
     prefix="/document",
-    # dependencies=[Depends(get_api_version)],
     responses=responses
 )
 
@@ -25,29 +28,27 @@ document_router = APIRouter(
     tags=["Documents"],
     description=document_docs.upload_descriptions,
     response_model=document_model.DocumentModel,
+    responses=responses,
     include_in_schema=True
 )
 async def upload_document(
     file: UploadFile,
-    db_session = Depends(db_config.get_session)
+    db_session=Depends(db_config.get_session),
+    service_provider=Depends(get_llm_providers)
 ):
+    """Handles document uploads.
+
+    Args:
+        file (UploadFile): The file to be uploaded.
+        db_session (Session, optional): Database session dependency.
+        service_provider (Any, optional): Service provider dependency.
+
+    Returns:
+        document_model.DocumentModel: The uploaded document's metadata and processing result.
+
+    Raises:
+        HTTPException: If the upload fails.
+    """
     logger.info(f"Upload documents route with filename: {file.filename}")
-    
-    try:
-        # Read the PDF file into a BytesIO object
-        pdf_file = await file.read()
-        pdf_reader = PyPDF2.PdfReader(BytesIO(pdf_file))
-        
-        pdf_text = ""
-        # Extract text from each page
-        for page in pdf_reader.pages:
-            pdf_text += page.extract_text() + "\n"
-            
-        return {"status": "success", "text": pdf_text}
-        
-    except Exception as e:
-        logger.error(f"Error processing PDF: {str(e)}")
-        raise HTTPException(
-            status_code=400,
-            detail="Invalid or corrupted PDF file"
-        )
+    response = await DocumentController().upload_document(file, service_provider, db_session)
+    return response
